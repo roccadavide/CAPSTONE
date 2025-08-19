@@ -1,0 +1,95 @@
+@import url("https://fonts.googleapis.com/css2?family=Arapey:ital@0;1&family=Spectral:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;0,800;1,200;1,300;1,400;1,500;1,600;1,700;1,800&display=swap");
+
+h1 {
+  font-family: "Spectral", serif;
+  font-weight: 200;
+  font-style: normal;
+}
+
+.navbar {
+  height: 7rem;
+}
+
+.navbar-gradient {
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 1), rgba(255, 255, 255, 0));
+  transition: background 0.3s ease-in-out;
+}
+
+.logo {
+  width: 12rem;
+}
+
+.nav-item:hover {
+  text-decoration: underline;
+}
+
+.nav-link {
+  font-size: 1.2rem;
+}
+
+.hero-section {
+  height: 100vh;
+  background-image: url("/michi.jpeg");
+  background-size: cover;
+  background-position: center;
+  position: relative;
+}
+
+.hero-section::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.4);
+}
+
+.overlay-text {
+  position: relative;
+  z-index: 2;
+}
+
+.container-prod {
+  min-height: 33rem;
+}
+
+/* CARDS */
+
+.prod_title {
+  font-size: 1.8rem;
+  margin-bottom: 0.3rem;
+}
+
+.prod_type {
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+}
+
+.prod_desc {
+  font-size: 1rem;
+  text-align: center;
+  font-weight: 300;
+}
+
+.prod_price {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-top: 0.6rem;
+  margin-bottom: 0;
+}
+
+.card {
+  max-width: 18rem;
+  border: 1px solid #745f45;
+  border-radius: 12px;
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer;
+}
+
+.card:hover {
+  transform: translateY(-8px) scale(1.03);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+  border-color: rgb(75, 48, 255);
+}
