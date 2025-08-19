@@ -6,6 +6,8 @@ h1 {
   font-style: normal;
 }
 
+/* NAVBAR */
+
 .navbar {
   height: 7rem;
 }
@@ -26,6 +28,8 @@ h1 {
 .nav-link {
   font-size: 1.2rem;
 }
+
+/* HERO SECTION */
 
 .hero-section {
   height: 100vh;
@@ -49,6 +53,8 @@ h1 {
   position: relative;
   z-index: 2;
 }
+
+/* PRODUCT SECTION */
 
 .container-prod {
   min-height: 33rem;
@@ -92,4 +98,51 @@ h1 {
   transform: translateY(-8px) scale(1.03);
   box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
   border-color: rgb(75, 48, 255);
+}
+
+/* ABOUT SECTION */
+
+.about-section {
+  position: relative;
+}
+
+.about-box {
+  background: rgba(233, 189, 153, 0.9);
+  width: 70vh;
+  border-radius: 20px;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+  z-index: 2;
+  position: relative;
+}
+
+@media (min-width: 768px) {
+  .about-section .about-box {
+    margin-left: -80px;
+  }
+}
+
+.object-fit-cover {
+  object-fit: cover;
+  height: 100%;
+  margin-left: 5rem;
+}
+
+.divider {
+  position: relative;
+  width: 80%;
+  height: 2px;
+  margin: 50px auto;
+  background: linear-gradient(90deg, transparent, black, transparent);
+  background-size: 200% 100%;
+  animation: scroll-gradient 5s linear infinite;
+  border-radius: 50%;
+}
+
+@keyframes scroll-gradient {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
 }
