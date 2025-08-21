@@ -1,4 +1,5 @@
 import { Container, Row, Col } from "react-bootstrap";
+import { Facebook, Instagram, Whatsapp } from "react-bootstrap-icons";
 
 const Footer = () => {
   return (
@@ -21,29 +22,34 @@ const Footer = () => {
           <Row className="text-center text-md-start">
             <Col md={4} className="mb-3 mb-md-0">
               <h5>Beauty Room</h5>
-              <p>Via Esempio 123, Milano</p>
-              <p>Tel: +39 333 1234567</p>
-              <p>Email: info@beautyroom.it</p>
+              <p>Viale Risorgimento 587, Calusco d'Adda BG</p>
+              <p>Tel: +39 378 0921723</p>
+              <p>Email: rossimichela.pmu@gmail.com</p>
+              <p>P. Iva: 04837370164</p>
             </Col>
 
             <Col md={4} className="mb-3 mb-md-0">
               <h5>Orari</h5>
-              <p>Lunedì - Venerdì: 9:00 - 19:00</p>
-              <p>Sabato: 9:00 - 13:00</p>
+              <p>Lunedì: solo prenotazioni</p>
+              <p>Martedì 9.00 - 16.00</p>
+              <p>Mercoledì 9.00 - 19.00</p>
+              <p>Giovedì 9.00 - 16.00</p>
+              <p>Venerdì: 9:00 - 19:00</p>
+              <p>Sabato: 9:00 - 14:30</p>
               <p>Domenica: Chiuso</p>
             </Col>
 
-            <Col md={4}>
+            <Col md={4} className="d-flex flex-column align-items-center">
               <h5>Seguici</h5>
-              <div className="d-flex justify-content-center justify-content-md-start gap-3">
+              <div className="d-flex justify-content-center justify-content-md-start gap-5 mt-3">
                 <a href="#" className="text-light">
-                  <i className="bi bi-facebook"></i>
+                  <Facebook size={50} />
                 </a>
                 <a href="#" className="text-light">
-                  <i className="bi bi-instagram"></i>
+                  <Instagram size={50} />
                 </a>
                 <a href="#" className="text-light">
-                  <i className="bi bi-whatsapp"></i>
+                  <Whatsapp size={50} />
                 </a>
               </div>
             </Col>

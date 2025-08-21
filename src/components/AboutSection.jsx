@@ -4,13 +4,12 @@ import { Link } from "react-router-dom";
 const AboutSection = () => {
   return (
     <section className="about-section py-5">
-      <Container fluid>
-        <Row className="align-items-center position-relative">
-          {/* Immagine */}
-          <Col md={6} className="p-0 position-relative">
+      <Container fluid className="p-5">
+        <Row className="align-items-center">
+          <Col md={6} className="p-0 col-img">
             <img src="/negoziomichi.jpeg" alt="Negozio Michela" className="img-fluid w-100 h-100 object-fit-cover" />
           </Col>
-          <Col md={6} className="d-flex justify-content-center align-items-center position-relative">
+          <Col md={6} className="d-flex justify-content-center align-items-center col-desc">
             <div className="about-box p-4 p-md-5 text-center text-md-start">
               <h2 className="mb-3">Il Negozio di Michela</h2>
               <p className="mb-4">
