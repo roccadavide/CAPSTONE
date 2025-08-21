@@ -22,20 +22,28 @@ function ProductsPage() {
 
   return (
     <Container fluid className="products-container">
-      <div className="d-flex justify-content-center gap-4 my-5">
-        <Button className="prod-button" onClick={() => setFiltro("viso")}>
-          Viso
-        </Button>
-        <Button className="prod-button" onClick={() => setFiltro("corpo")}>
-          Corpo
-        </Button>
-        <Button className="prod-button" onClick={() => setFiltro("all")}>
-          Tutti
-        </Button>
-        <Button className="prod-button" onClick={() => setFiltro("makeup")}>
-          Makeup
-        </Button>
-      </div>
+      <Row className="justify-content-center my-5">
+        <Col xs={6} sm={3} className="text-center my-3">
+          <Button className="prod-button" onClick={() => setFiltro("all")}>
+            Tutti
+          </Button>
+        </Col>
+        <Col xs={6} sm={3} className="text-center my-3">
+          <Button className="prod-button" onClick={() => setFiltro("viso")}>
+            Viso
+          </Button>
+        </Col>
+        <Col xs={6} sm={3} className="text-center my-3">
+          <Button className="prod-button" onClick={() => setFiltro("corpo")}>
+            Corpo
+          </Button>
+        </Col>
+        <Col xs={6} sm={3} className="text-center mt-3">
+          <Button className="prod-button" onClick={() => setFiltro("makeup")}>
+            Makeup
+          </Button>
+        </Col>
+      </Row>
 
       <Row className="g-4 justify-content-center">
         {prodottiFiltrati.map(p => (

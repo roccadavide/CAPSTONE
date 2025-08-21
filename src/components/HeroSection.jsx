@@ -1,5 +1,3 @@
-import React from "react";
-
 const HeroSection = () => {
   return (
     <div className="hero-section d-flex align-items-center justify-content-center">

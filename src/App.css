@@ -16,11 +16,17 @@ h1 {
 
 .navbar {
   height: 7rem;
+  transition: background 0.6s ease, box-shadow 0.6s ease;
 }
 
 .navbar-gradient {
-  background: linear-gradient(to bottom, rgba(255, 255, 255, 1), rgba(255, 255, 255, 0));
-  transition: background 0.3s ease-in-out;
+  background: linear-gradient(to bottom, rgba(255, 255, 250, 0.95), rgba(255, 255, 255, 0));
+  box-shadow: none;
+}
+
+.navbar-solid {
+  background: #fffdf7;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
 }
 
 .logo {
@@ -33,6 +39,12 @@ h1 {
 
 .nav-link {
   font-size: 1.2rem;
+  color: #4a3c2c !important;
+  transition: color 0.3s ease;
+}
+
+.nav-link:hover {
+  color: #7a5e3c !important;
 }
 
 /* HERO SECTION */
@@ -145,6 +157,44 @@ h1 {
 
 /* PRODUCTS SECTION */
 
-.products-container {
+.prod-button {
+  width: 6rem;
+  padding: 0.6rem 1rem;
+  border: 2px solid #dda128;
+  background-color: white;
+  color: #333;
+  font-weight: 500;
+  font-size: 1rem;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.prod-button:hover {
+  background-color: #f5f0e6;
+  color: #111;
+  transform: translateY(-3px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* PRODUCT HERO SECTION */
+
+.product-hero-section {
+  height: 60vh;
+  background-image: url("/img-prodotti.webp");
+  background-size: cover;
+  background-position: center;
+  position: relative;
   margin-top: 112px;
+}
+
+.product-hero-section::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.4);
 }

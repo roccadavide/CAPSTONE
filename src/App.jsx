@@ -7,6 +7,7 @@ import HeroSection from "./components/HeroSection";
 import NavBar from "./components/NavBar";
 import ProductSection from "./components/ProductSection";
 import ProductsPage from "./components/ProductsPage";
+import ProductsHeroSection from "./components/ProductsHeroSection";
 
 function App() {
   return (
@@ -24,7 +25,15 @@ function App() {
             </>
           }
         />
-        <Route path="/prodotti" element={<ProductsPage />} />
+        <Route
+          path="/prodotti"
+          element={
+            <>
+              <ProductsHeroSection />
+              <ProductsPage />
+            </>
+          }
+        />
       </Routes>
       <Footer />
     </>
