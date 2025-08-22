@@ -8,6 +8,8 @@ import NavBar from "./components/NavBar";
 import ProductSection from "./components/ProductSection";
 import ProductsPage from "./components/ProductsPage";
 import ProductsHeroSection from "./components/ProductsHeroSection";
+import AboutHeroSection from "./components/AboutHeroSection";
+import AboutDescription from "./components/AboutDescription";
 
 function App() {
   return (
@@ -31,6 +33,14 @@ function App() {
             <>
               <ProductsHeroSection />
               <ProductsPage />
+            </>
+          }
+        />
+        <Route
+          path="/chisono"
+          element={
+            <>
+              <AboutDescription />
             </>
           }
         />

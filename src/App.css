@@ -198,3 +198,20 @@ h1 {
   height: 100%;
   background-color: rgba(0, 0, 0, 0.4);
 }
+
+/* ABOUT HERO SECTION */
+
+.about-hero-section {
+  height: 60vh;
+  background-image: url("/mammamichi.jpeg");
+  background-size: cover;
+  background-position: center;
+  position: relative;
+  margin-top: 112px;
+}
+
+/* ABOUT HERO SECTION */
+
+.about-desc-section {
+  margin-top: 112px;
+}
