@@ -10,6 +10,7 @@ import ProductsPage from "./components/ProductsPage";
 import ProductsHeroSection from "./components/ProductsHeroSection";
 import AboutHeroSection from "./components/AboutHeroSection";
 import AboutDescription from "./components/AboutDescription";
+import BookingsPage from "./components/BookingsPage";
 
 function App() {
   return (
@@ -40,7 +41,16 @@ function App() {
           path="/chisono"
           element={
             <>
+              <AboutHeroSection />
               <AboutDescription />
+            </>
+          }
+        />
+        <Route
+          path="/prenotazioni"
+          element={
+            <>
+              <BookingsPage />
             </>
           }
         />
