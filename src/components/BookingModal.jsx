@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import { Modal, Button, Form, Badge } from "react-bootstrap";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { generateTimeSlots } from "../../utils/schedule";
+import { generateTimeSlots } from "../utils/schedules";
 
 const BookingModal = ({ show, onHide, service }) => {
   const [step, setStep] = useState(1);

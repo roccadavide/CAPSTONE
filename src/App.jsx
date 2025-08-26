@@ -11,6 +11,7 @@ import ProductsHeroSection from "./components/ProductsHeroSection";
 import AboutHeroSection from "./components/AboutHeroSection";
 import AboutDescription from "./components/AboutDescription";
 import BookingsPage from "./components/BookingsPage";
+import ServiceDetail from "./components/ServiceDetails";
 
 function App() {
   return (
@@ -46,14 +47,8 @@ function App() {
             </>
           }
         />
-        <Route
-          path="/prenotazioni"
-          element={
-            <>
-              <BookingsPage />
-            </>
-          }
-        />
+        <Route path="/prenotazioni" element={<BookingsPage />} />
+        <Route path="/prenotazioni/:serviceId" element={<ServiceDetail />} />
       </Routes>
       <Footer />
     </>
