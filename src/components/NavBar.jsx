@@ -57,8 +57,8 @@ const NavBar = () => {
         </div>
         <div className="d-flex align-items-center gap-5 me-5">
           <NavDropdown title={<PersonCircle size={24} color="black" />} id="navbarScrollingDropdown">
-            <NavDropdown.Item href="#">Accedi</NavDropdown.Item>
-            <NavDropdown.Item href="#">Registrati</NavDropdown.Item>
+            <NavDropdown.Item href="/login">Accedi</NavDropdown.Item>
+            <NavDropdown.Item href="/register">Registrati</NavDropdown.Item>
           </NavDropdown>
           <NavDropdown title={<BagHeart size={24} color="black" />} id="navbarScrollingDropdown">
             <NavDropdown.Item href="#">Carrello vuoto</NavDropdown.Item>

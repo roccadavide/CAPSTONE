@@ -12,6 +12,8 @@ import AboutHeroSection from "./components/AboutHeroSection";
 import AboutDescription from "./components/AboutDescription";
 import BookingsPage from "./components/BookingsPage";
 import ServiceDetail from "./components/ServiceDetails";
+import Register from "./components/Register";
+import Login from "./components/Login";
 
 function App() {
   return (
@@ -49,6 +51,8 @@ function App() {
         />
         <Route path="/prenotazioni" element={<BookingsPage />} />
         <Route path="/prenotazioni/:serviceId" element={<ServiceDetail />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
       </Routes>
       <Footer />
     </>
