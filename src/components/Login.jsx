@@ -1,11 +1,14 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { loginUser } from "../api/api";
+import { fetchCurrentUser, loginUser } from "../api/api";
+import { useDispatch } from "react-redux";
+import { loginSuccess } from "../redux/action/authActions";
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 const Login = () => {
   const nav = useNavigate();
+  const dispatch = useDispatch();
   const [form, setForm] = useState({ email: "", password: "" });
   const [errors, setErrors] = useState({});
   const [serverError, setServerError] = useState(null);
@@ -41,7 +44,15 @@ const Login = () => {
         password: form.password,
       });
 
-      localStorage.setItem("token", data.token);
+      const token = data.accessToken;
+
+      console.log(token);
+
+      const user = await fetchCurrentUser(token);
+
+      console.log(user);
+
+      dispatch(loginSuccess(user, token));
 
       setSuccessMessage("Accesso avvenuto con successo! Reindirizzamento alla homepage...");
 

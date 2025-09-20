@@ -1,20 +1,66 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
-import { Container, Row, Col, Badge, Button, Image } from "react-bootstrap";
-import { SERVICES } from "../data/services";
+import { Container, Row, Col, Badge, Button, Image, Spinner } from "react-bootstrap";
 import BookingModal from "./BookingModal";
+import { fetchCategories, fetchServices } from "../api/api";
 
 const ServiceDetail = () => {
   const { serviceId } = useParams();
-  const service = useMemo(() => SERVICES.find(s => s.id === serviceId), [serviceId]);
+  const [service, setService] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [open, setOpen] = useState(false);
+  const [categories, setCategories] = useState([]);
 
-  if (!service)
+  useEffect(() => {
+    const loadServices = async () => {
+      try {
+        const allServices = await fetchServices();
+        const foundService = allServices.find(s => s.serviceId === serviceId);
+        setService(foundService || null);
+
+        const cats = await fetchCategories();
+        setCategories(cats);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadServices();
+  }, [serviceId]);
+
+  const categoriesMap = useMemo(() => {
+    const map = {};
+    categories.forEach(c => {
+      map[c.categoryId] = c.label;
+    });
+    return map;
+  }, [categories]);
+
+  if (loading) {
+    return (
+      <Container style={{ marginTop: "7rem" }}>
+        <Spinner animation="border" role="status" />
+      </Container>
+    );
+  }
+
+  if (error) {
+    return (
+      <Container style={{ marginTop: "7rem" }}>
+        <p>{error}</p>
+      </Container>
+    );
+  }
+
+  if (!service) {
     return (
       <Container style={{ marginTop: "7rem" }}>
         <p>Servizio non trovato.</p>
       </Container>
     );
+  }
 
   return (
     <Container fluid className="py-5" style={{ marginTop: "7rem" }}>
@@ -26,7 +72,7 @@ const ServiceDetail = () => {
           <h1 className="mb-2">{service.title}</h1>
           <div className="d-flex align-items-center gap-2 mb-3">
             <Badge bg="secondary" className="text-uppercase">
-              {service.category}
+              {categoriesMap[service.categoryName] || "Senza categoria"}
             </Badge>
             <small className="text-muted">{service.durationMin} min</small>
           </div>

@@ -1,10 +1,14 @@
 import { useEffect, useState } from "react";
 import { Container, NavDropdown } from "react-bootstrap";
 import { BagHeart, PersonCircle } from "react-bootstrap-icons";
+import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+import { logout } from "../redux/action/authActions";
 
 const NavBar = () => {
   const [scrolled, setScrolled] = useState(false);
+  const { user } = useSelector(state => state.auth);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 50);
@@ -56,13 +60,26 @@ const NavBar = () => {
           </ul>
         </div>
         <div className="d-flex align-items-center gap-5 me-5">
-          <NavDropdown title={<PersonCircle size={24} color="black" />} id="navbarScrollingDropdown">
-            <NavDropdown.Item href="/login">Accedi</NavDropdown.Item>
-            <NavDropdown.Item href="/register">Registrati</NavDropdown.Item>
-          </NavDropdown>
-          <NavDropdown title={<BagHeart size={24} color="black" />} id="navbarScrollingDropdown">
-            <NavDropdown.Item href="#">Carrello vuoto</NavDropdown.Item>
-          </NavDropdown>
+          {user ? (
+            <>
+              <NavDropdown title={<PersonCircle size={24} color="black" />} id="navbarScrollingDropdown">
+                <span>Ciao, {user.name}</span>
+                <NavDropdown.Item>Le mie prenotazioni</NavDropdown.Item>
+                <NavDropdown.Item>I miei ordini</NavDropdown.Item>
+                <NavDropdown.Item onClick={() => dispatch(logout())}>Logout</NavDropdown.Item>
+              </NavDropdown>
+            </>
+          ) : (
+            <>
+              <NavDropdown title={<PersonCircle size={24} color="black" />} id="navbarScrollingDropdown">
+                <NavDropdown.Item href="/login">Accedi</NavDropdown.Item>
+                <NavDropdown.Item href="/register">Registrati</NavDropdown.Item>
+              </NavDropdown>
+              <NavDropdown title={<BagHeart size={24} color="black" />} id="navbarScrollingDropdown">
+                <NavDropdown.Item href="#">Carrello vuoto</NavDropdown.Item>
+              </NavDropdown>
+            </>
+          )}
         </div>
       </Container>
     </nav>
