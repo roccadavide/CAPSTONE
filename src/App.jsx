@@ -35,7 +35,6 @@ function App() {
           path="/prodotti"
           element={
             <>
-              <ProductsHeroSection />
               <ProductsPage />
             </>
           }

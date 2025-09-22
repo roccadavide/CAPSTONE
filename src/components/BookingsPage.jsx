@@ -1,9 +1,11 @@
 import { useEffect, useMemo, useState } from "react";
 import { Container, Row, Col, Form, Button, Card, Badge, Spinner } from "react-bootstrap";
 import { Link } from "react-router-dom";
-import { fetchCategories, fetchServices } from "../api/api";
+import { fetchCategories, fetchServices, deleteService } from "../api/api";
 import { useSelector } from "react-redux";
 import ServiceModal from "./ServiceModal";
+import DeleteServiceModal from "./DeleteServiceModal";
+import { PencilFill, Trash2Fill, Plus } from "react-bootstrap-icons";
 
 const BookingsPage = () => {
   const [cat, setCat] = useState("all");
@@ -12,16 +14,21 @@ const BookingsPage = () => {
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [open, setOpen] = useState(false);
-  const { user } = useSelector(state => state.auth);
 
+  const [open, setOpen] = useState(false);
+  const [deleteModal, setDeleteModal] = useState(false);
+
+  const [selectedService, setSelectedService] = useState(null);
+  const [editingService, setEditingService] = useState(null);
+
+  const { user, token } = useSelector(state => state.auth);
+
+  // ---------- FETCH ----------
   useEffect(() => {
     const loadData = async () => {
       try {
-        const services = await fetchServices();
+        const [services, cats] = await Promise.all([fetchServices(), fetchCategories()]);
         setAllServices(services);
-
-        const cats = await fetchCategories();
         setCategories(cats);
       } catch (err) {
         setError(err.message);
@@ -32,6 +39,7 @@ const BookingsPage = () => {
     loadData();
   }, []);
 
+  // ---------- CATEGORIES MAP ----------
   const categoriesMap = useMemo(() => {
     const map = {};
     categories.forEach(c => {
@@ -40,12 +48,49 @@ const BookingsPage = () => {
     return map;
   }, [categories]);
 
+  // ---------- FILTER ----------
   const filtered = useMemo(() => {
     return allServices
       .filter(s => (cat === "all" ? true : s.categoryName === cat))
       .filter(s => s.title.toLowerCase().includes(q.toLowerCase()) || s.shortDescription.toLowerCase().includes(q.toLowerCase()));
   }, [allServices, cat, q]);
 
+  // ---------- DELETE ----------
+  const handleDeleteConfirm = async id => {
+    try {
+      await deleteService(id, token);
+      setAllServices(prev => prev.filter(s => s.serviceId !== id));
+      setDeleteModal(false);
+      setSelectedService(null);
+    } catch (err) {
+      alert("Errore durante l'eliminazione: " + err.message);
+    }
+  };
+
+  // ---------- EDIT ----------
+  const handleEdit = service => {
+    setEditingService(service);
+    setOpen(true);
+  };
+
+  // ---------- CREATE ----------
+  const handleCreate = () => {
+    setEditingService(null);
+    setOpen(true);
+  };
+
+  // ---------- UPDATE OR CREATE ----------
+  const handleServiceSaved = updatedService => {
+    if (editingService) {
+      setAllServices(prev => prev.map(s => (s.serviceId === updatedService.serviceId ? updatedService : s)));
+    } else {
+      setAllServices(prev => [...prev, updatedService]);
+    }
+    setOpen(false);
+    setEditingService(null);
+  };
+
+  // ---------- UI ----------
   if (loading) {
     return (
       <Container style={{ marginTop: "7rem" }}>
@@ -88,9 +133,14 @@ const BookingsPage = () => {
       </Container>
 
       {user?.role === "ADMIN" && (
-        <div className="text-center mb-4">
-          <Button variant="success" className="rounded-circle" onClick={() => setOpen(true)}>
-            +
+        <div className="mb-4 d-flex align-items-center justify-content-center">
+          <Button
+            variant="success"
+            className="rounded-circle d-flex align-items-center justify-content-center"
+            style={{ width: "3rem", height: "3rem" }}
+            onClick={handleCreate}
+          >
+            <Plus />
           </Button>
         </div>
       )}
@@ -108,6 +158,23 @@ const BookingsPage = () => {
                       {categoriesMap[s.categoryName] || "Senza categoria"}
                     </Badge>
                     <small className="text-muted">{s.durationMin} min</small>
+                    {user?.role === "ADMIN" && (
+                      <div className="d-flex gap-2 ms-auto">
+                        <Button variant="secondary" className="rounded-circle d-flex justify-content-center align-items-center" onClick={() => handleEdit(s)}>
+                          <PencilFill />
+                        </Button>
+                        <Button
+                          variant="danger"
+                          className="rounded-circle d-flex justify-content-center align-items-center"
+                          onClick={() => {
+                            setSelectedService(s);
+                            setDeleteModal(true);
+                          }}
+                        >
+                          <Trash2Fill />
+                        </Button>
+                      </div>
+                    )}
                   </div>
                   <Card.Text className="flex-grow-1">{s.shortDescription}</Card.Text>
                   <div className="d-flex justify-content-between align-items-center mt-2">
@@ -124,12 +191,20 @@ const BookingsPage = () => {
       </Container>
 
       {user?.role === "ADMIN" && (
-        <ServiceModal
-          show={open}
-          onHide={() => setOpen(false)}
-          categories={categories}
-          onServiceCreated={service => setAllServices(prev => [...prev, service])}
-        />
+        <>
+          <ServiceModal
+            show={open}
+            onHide={() => {
+              setOpen(false);
+              setEditingService(null);
+            }}
+            categories={categories}
+            service={editingService}
+            onServiceSaved={handleServiceSaved}
+          />
+
+          <DeleteServiceModal show={deleteModal} onHide={() => setDeleteModal(false)} service={selectedService} onConfirm={handleDeleteConfirm} />
+        </>
       )}
     </Container>
   );

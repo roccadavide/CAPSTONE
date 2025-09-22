@@ -1,19 +1,18 @@
-import { useState, useEffect } from "react";
-import { Modal, Button, Form, Alert, Spinner } from "react-bootstrap";
-import { createService, updateService } from "../api/api";
+import { Alert, Button, Form, Modal, Spinner } from "react-bootstrap";
+import { createProduct, updateProduct } from "../api/api";
 import { useSelector } from "react-redux";
+import { useEffect, useState } from "react";
 
-const ServiceModal = ({ show, onHide, categories, onServiceSaved, service }) => {
+const ProductModal = ({ show, onHide, categories, onProductSaved, product }) => {
   const { token } = useSelector(state => state.auth);
 
-  const isEdit = Boolean(service);
+  const isEdit = Boolean(product);
 
   const [form, setForm] = useState({
-    title: "",
-    shortDescription: "",
-    description: "",
+    name: "",
     price: "",
-    durationMin: "",
+    description: "",
+    stock: "",
     categoryId: "",
   });
   const [file, setFile] = useState(null);
@@ -23,25 +22,23 @@ const ServiceModal = ({ show, onHide, categories, onServiceSaved, service }) => 
   useEffect(() => {
     if (isEdit) {
       setForm({
-        title: service.title || "",
-        shortDescription: service.shortDescription || "",
-        description: service.description || "",
-        price: service.price || "",
-        durationMin: service.durationMin || "",
-        categoryId: service.category?.categoryId || "",
+        name: product.name || "",
+        price: product.price || "",
+        description: product.description || "",
+        stock: product.stock || "",
+        categoryId: product.category?.categoryId || "",
       });
     } else {
       setForm({
-        title: "",
-        shortDescription: "",
-        description: "",
+        name: "",
         price: "",
-        durationMin: "",
+        description: "",
+        stock: "",
         categoryId: "",
       });
       setFile(null);
     }
-  }, [service, isEdit]);
+  }, [product, isEdit]);
 
   const handleChange = (field, value) => {
     setForm(prev => ({ ...prev, [field]: value }));
@@ -54,7 +51,7 @@ const ServiceModal = ({ show, onHide, categories, onServiceSaved, service }) => 
   const handleSubmit = async () => {
     setError(null);
 
-    if (!form.title || !form.shortDescription || !form.description || !form.price || !form.durationMin || !form.categoryId) {
+    if (!form.name || !form.price || !form.description || !form.stock || !form.categoryId) {
       setError("Compila tutti i campi obbligatori.");
       return;
     }
@@ -64,8 +61,8 @@ const ServiceModal = ({ show, onHide, categories, onServiceSaved, service }) => 
       return;
     }
 
-    if (isNaN(form.durationMin) || form.durationMin <= 0) {
-      setError("La durata deve essere un numero positivo.");
+    if (isNaN(form.stock) || form.stock <= 0) {
+      setError("Lo stock deve essere un numero positivo.");
       return;
     }
 
@@ -73,25 +70,24 @@ const ServiceModal = ({ show, onHide, categories, onServiceSaved, service }) => 
       setLoading(true);
 
       const payload = {
-        title: form.title,
-        shortDescription: form.shortDescription,
+        name: form.name,
+        price: parseFloat(form.price),
         description: form.description,
-        price: form.price,
-        durationMin: form.durationMin,
+        stock: parseInt(form.stock, 10),
         categoryId: form.categoryId,
       };
 
-      let savedService;
+      let savedProduct;
 
       if (isEdit) {
         // PUT
-        savedService = await updateService(service.serviceId, payload, file, token);
+        savedProduct = await updateProduct(product.productId, payload, file, token);
       } else {
         // POST
-        savedService = await createService(payload, file, token);
+        savedProduct = await createProduct(payload, file, token);
       }
 
-      onServiceSaved(savedService);
+      onProductSaved(savedProduct);
       onHide();
     } catch (err) {
       setError(err.message);
@@ -103,35 +99,30 @@ const ServiceModal = ({ show, onHide, categories, onServiceSaved, service }) => 
   return (
     <Modal show={show} onHide={onHide}>
       <Modal.Header closeButton>
-        <Modal.Title>{isEdit ? "Modifica Servizio" : "Aggiungi Servizio"}</Modal.Title>
+        <Modal.Title>{isEdit ? "Modifica Prodotto" : "Aggiungi Prodotto"}</Modal.Title>
       </Modal.Header>
       <Modal.Body>
         {error && <Alert variant="danger">{error}</Alert>}
 
         <Form>
           <Form.Group className="mb-3">
-            <Form.Label>Titolo *</Form.Label>
-            <Form.Control type="text" value={form.title} onChange={e => handleChange("title", e.target.value)} />
-          </Form.Group>
-
-          <Form.Group className="mb-3">
-            <Form.Label>Breve descrizione *</Form.Label>
-            <Form.Control type="text" value={form.shortDescription} onChange={e => handleChange("shortDescription", e.target.value)} />
-          </Form.Group>
-
-          <Form.Group className="mb-3">
-            <Form.Label>Descrizione dettagliata *</Form.Label>
-            <Form.Control as="textarea" rows={3} value={form.description} onChange={e => handleChange("description", e.target.value)} />
+            <Form.Label>Nome *</Form.Label>
+            <Form.Control type="text" value={form.name} onChange={e => handleChange("name", e.target.value)} />
           </Form.Group>
 
           <Form.Group className="mb-3">
             <Form.Label>Prezzo (€) *</Form.Label>
-            <Form.Control type="number" value={form.price} onChange={e => handleChange("price", e.target.value)} />
+            <Form.Control type="text" value={form.price} onChange={e => handleChange("price", e.target.value)} />
           </Form.Group>
 
           <Form.Group className="mb-3">
-            <Form.Label>Durata (min) *</Form.Label>
-            <Form.Control type="number" value={form.durationMin} onChange={e => handleChange("durationMin", e.target.value)} />
+            <Form.Label>Descrizione *</Form.Label>
+            <Form.Control as="textarea" rows={3} value={form.description} onChange={e => handleChange("description", e.target.value)} />
+          </Form.Group>
+
+          <Form.Group className="mb-3">
+            <Form.Label>Stock *</Form.Label>
+            <Form.Control type="number" value={form.stock} onChange={e => handleChange("stock", e.target.value)} />
           </Form.Group>
 
           <Form.Group className="mb-3">
@@ -164,4 +155,4 @@ const ServiceModal = ({ show, onHide, categories, onServiceSaved, service }) => 
   );
 };
 
-export default ServiceModal;
+export default ProductModal;
