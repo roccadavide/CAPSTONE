@@ -2,22 +2,22 @@ import { useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Container, Row, Col, Badge, Button, Image, Spinner } from "react-bootstrap";
 import BookingModal from "./BookingModal";
-import { fetchCategories, fetchServices } from "../api/api";
+import { fetchCategories, fetchProducts } from "../api/api";
+import QuantitySelector from "./QuantitySelector";
 
-const ServiceDetail = () => {
-  const { serviceId } = useParams();
-  const [service, setService] = useState(null);
+const ProductDetail = () => {
+  const { productId } = useParams();
+  const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [open, setOpen] = useState(false);
   const [categories, setCategories] = useState([]);
 
   useEffect(() => {
-    const loadServices = async () => {
+    const loadProducts = async () => {
       try {
-        const allServices = await fetchServices();
-        const foundService = allServices.find(s => s.serviceId === serviceId);
-        setService(foundService || null);
+        const allProducts = await fetchProducts();
+        const foundProduct = allProducts.find(p => p.productId === productId);
+        setProduct(foundProduct || null);
 
         const cats = await fetchCategories();
         setCategories(cats);
@@ -27,8 +27,8 @@ const ServiceDetail = () => {
         setLoading(false);
       }
     };
-    loadServices();
-  }, [serviceId]);
+    loadProducts();
+  }, [productId]);
 
   const categoriesMap = useMemo(() => {
     const map = {};
@@ -62,7 +62,7 @@ const ServiceDetail = () => {
     );
   }
 
-  if (!service) {
+  if (!product) {
     return (
       <Container style={{ marginTop: "7rem" }}>
         <p>Servizio non trovato.</p>
@@ -71,30 +71,26 @@ const ServiceDetail = () => {
   }
 
   return (
-    <Container fluid className="py-5" style={{ marginTop: "7rem" }}>
+    <Container fluid style={{ marginTop: "112px" }}>
       <Row className="align-items-center g-4">
         <Col md={6}>
-          <Image src={service.images?.[0]} alt={service.title} fluid rounded />
+          <Image src={product.images?.[0]} alt={product.title} fluid rounded />
         </Col>
         <Col md={6}>
-          <h1 className="mb-2">{service.title}</h1>
+          <h1 className="mb-2">{product.name}</h1>
           <div className="d-flex align-items-center gap-2 mb-3">
-            <Badge bg={badgeColors[service.categoryName] || "secondary"} className="text-uppercase">
-              {categoriesMap[service.categoryName] || "Senza categoria"}
+            <Badge bg={badgeColors[product.categoryId] || "secondary"} className="text-uppercase">
+              {categoriesMap[product.categoryId] || "Senza categoria"}
             </Badge>
-            <small className="text-muted">{service.durationMin} min</small>
+            <small className="text-muted">{product.stock} rimanenti</small>
           </div>
-          <p className="mb-3">{service.description}</p>
-          <h4 className="mb-4">€ {service.price}</h4>
-          <Button variant="dark" className="rounded-pill px-4" onClick={() => setOpen(true)}>
-            Prenota ora
-          </Button>
+          <p className="mb-3">{product.description}</p>
+          <h4 className="mb-4">€ {product.price}</h4>
+          <QuantitySelector product={product} />
         </Col>
       </Row>
-
-      <BookingModal show={open} onHide={() => setOpen(false)} service={service} />
     </Container>
   );
 };
 
-export default ServiceDetail;
+export default ProductDetail;

@@ -3,7 +3,7 @@ import { Badge, Button, Card, Col, Container, Form, Row, Spinner } from "react-b
 import { deleteProduct, fetchCategories, fetchProducts } from "../api/api";
 import { useSelector } from "react-redux";
 import { PencilFill, Plus, Trash2Fill } from "react-bootstrap-icons";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import DeleteProductModal from "./DeleteProductModal";
 import ProductModal from "./ProductModal";
 
@@ -22,6 +22,8 @@ function ProductsPage() {
   const [editingProduct, setEditingProduct] = useState(null);
 
   const { user, token } = useSelector(state => state.auth);
+
+  const navigate = useNavigate();
 
   // ---------- FETCH ----------
   useEffect(() => {
@@ -90,6 +92,14 @@ function ProductsPage() {
     setEditingProduct(null);
   };
 
+  const badgeColors = {
+    "036f8d73-0d71-415f-b4cb-db4711c4c586": "primary", //Trucco permanente
+    "1225ed9f-c5c8-4003-97b0-50a62874de4a": "success", //Piedi
+    "89bbe501-6470-46a6-9187-1e19f9241bf4": "warning", //Mani
+    "a8a1465f-032b-4481-8f47-160504b6036b": "info", //Corpo
+    "f39e37ff-1210-4446-8968-610d2d1d6563": "danger", //Viso
+  };
+
   // ---------- UI ----------
   if (loading) {
     return (
@@ -151,24 +161,36 @@ function ProductsPage() {
         <Row className="g-4 justify-content-center">
           {filtered.map(p => (
             <Col key={p.productId} xs={12} sm={6} md={4} lg={3}>
-              <Card className="h-100 shadow-sm">
+              <Card className="h-100 shadow-sm" onClick={() => navigate(`/prodotti/${p.productId}`)}>
                 <Card.Img src={p.images?.[0]} alt={p.name} />
                 <Card.Body className="d-flex flex-column">
                   <Card.Title className="mb-1">{p.name}</Card.Title>
                   <div className="mb-2 d-flex align-items-center gap-2">
-                    <Badge bg="secondary" className="text-uppercase">
+                    <Badge bg={badgeColors[p.categoryId] || "secondary"} className="text-uppercase">
                       {categoriesMap[p.categoryId] || "Senza categoria"}
                     </Badge>
-                    <small className="text-muted">{p.stock} in stock</small>
+                    <small className="text-muted">{p.stock} rimanenti</small>
+                  </div>
+                  <Card.Text className="flex-grow-1">{p.shortDescription}</Card.Text>
+                  <div className="d-flex justify-content-between align-items-center mt-2">
+                    <strong>€ {p.price}</strong>
                     {user?.role === "ADMIN" && (
                       <div className="d-flex gap-2 ms-auto">
-                        <Button variant="secondary" className="rounded-circle d-flex justify-content-center align-items-center" onClick={() => handleEdit(p)}>
+                        <Button
+                          variant="secondary"
+                          className="rounded-circle d-flex justify-content-center align-items-center"
+                          onClick={e => {
+                            e.stopPropagation();
+                            handleEdit(p);
+                          }}
+                        >
                           <PencilFill />
                         </Button>
                         <Button
                           variant="danger"
                           className="rounded-circle d-flex justify-content-center align-items-center"
-                          onClick={() => {
+                          onClick={e => {
+                            e.stopPropagation();
                             setSelectedProduct(p);
                             setDeleteModal(true);
                           }}
@@ -177,13 +199,6 @@ function ProductsPage() {
                         </Button>
                       </div>
                     )}
-                  </div>
-                  <Card.Text className="flex-grow-1">{p.description}</Card.Text>
-                  <div className="d-flex justify-content-between align-items-center mt-2">
-                    <strong>€ {p.price}</strong>
-                    <Link to={`/prenotazioni/${p.productId}`} className="btn btn-dark btn-sm rounded-pill">
-                      Dettagli
-                    </Link>
                   </div>
                 </Card.Body>
               </Card>

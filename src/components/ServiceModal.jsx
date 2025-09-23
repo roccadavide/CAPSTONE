@@ -20,6 +20,18 @@ const ServiceModal = ({ show, onHide, categories, onServiceSaved, service }) => 
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
 
+  const resetForm = () => {
+    setForm({
+      title: "",
+      shortDescription: "",
+      description: "",
+      price: "",
+      durationMin: "",
+      categoryId: "",
+    });
+    setFile(null);
+  };
+
   useEffect(() => {
     if (isEdit) {
       setForm({
@@ -31,15 +43,7 @@ const ServiceModal = ({ show, onHide, categories, onServiceSaved, service }) => 
         categoryId: service.category?.categoryId || "",
       });
     } else {
-      setForm({
-        title: "",
-        shortDescription: "",
-        description: "",
-        price: "",
-        durationMin: "",
-        categoryId: "",
-      });
-      setFile(null);
+      resetForm();
     }
   }, [service, isEdit]);
 
@@ -76,7 +80,7 @@ const ServiceModal = ({ show, onHide, categories, onServiceSaved, service }) => 
         title: form.title,
         shortDescription: form.shortDescription,
         description: form.description,
-        price: form.price,
+        price: parseFloat(form.price),
         durationMin: form.durationMin,
         categoryId: form.categoryId,
       };
@@ -89,6 +93,7 @@ const ServiceModal = ({ show, onHide, categories, onServiceSaved, service }) => 
       } else {
         // POST
         savedService = await createService(payload, file, token);
+        resetForm();
       }
 
       onServiceSaved(savedService);

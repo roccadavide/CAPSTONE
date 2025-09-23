@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Container, Row, Col, Form, Button, Card, Badge, Spinner } from "react-bootstrap";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { fetchCategories, fetchServices, deleteService } from "../api/api";
 import { useSelector } from "react-redux";
 import ServiceModal from "./ServiceModal";
@@ -22,6 +22,8 @@ const BookingsPage = () => {
   const [editingService, setEditingService] = useState(null);
 
   const { user, token } = useSelector(state => state.auth);
+
+  const navigate = useNavigate();
 
   // ---------- FETCH ----------
   useEffect(() => {
@@ -90,6 +92,14 @@ const BookingsPage = () => {
     setEditingService(null);
   };
 
+  const badgeColors = {
+    "036f8d73-0d71-415f-b4cb-db4711c4c586": "primary", //Trucco permanente
+    "1225ed9f-c5c8-4003-97b0-50a62874de4a": "success", //Piedi
+    "89bbe501-6470-46a6-9187-1e19f9241bf4": "warning", //Mani
+    "a8a1465f-032b-4481-8f47-160504b6036b": "info", //Corpo
+    "f39e37ff-1210-4446-8968-610d2d1d6563": "danger", //Viso
+  };
+
   // ---------- UI ----------
   if (loading) {
     return (
@@ -149,24 +159,36 @@ const BookingsPage = () => {
         <Row className="g-4 justify-content-center">
           {filtered.map(s => (
             <Col key={s.serviceId} xs={12} sm={6} md={4} lg={3}>
-              <Card className="h-100 shadow-sm">
+              <Card className="h-100 shadow-sm" onClick={() => navigate(`/trattamenti/${s.serviceId}`)}>
                 <Card.Img src={s.images?.[0]} alt={s.title} />
                 <Card.Body className="d-flex flex-column">
                   <Card.Title className="mb-1">{s.title}</Card.Title>
                   <div className="mb-2 d-flex align-items-center gap-2">
-                    <Badge bg="secondary" className="text-uppercase">
+                    <Badge bg={badgeColors[s.categoryName] || "secondary"} className="text-uppercase">
                       {categoriesMap[s.categoryName] || "Senza categoria"}
                     </Badge>
                     <small className="text-muted">{s.durationMin} min</small>
+                  </div>
+                  <Card.Text className="flex-grow-1">{s.shortDescription}</Card.Text>
+                  <div className="d-flex justify-content-between align-items-center mt-2">
+                    <strong>€ {s.price}</strong>
                     {user?.role === "ADMIN" && (
                       <div className="d-flex gap-2 ms-auto">
-                        <Button variant="secondary" className="rounded-circle d-flex justify-content-center align-items-center" onClick={() => handleEdit(s)}>
+                        <Button
+                          variant="secondary"
+                          className="rounded-circle d-flex justify-content-center align-items-center"
+                          onClick={e => {
+                            e.stopPropagation();
+                            handleEdit(s);
+                          }}
+                        >
                           <PencilFill />
                         </Button>
                         <Button
                           variant="danger"
                           className="rounded-circle d-flex justify-content-center align-items-center"
-                          onClick={() => {
+                          onClick={e => {
+                            e.stopPropagation();
                             setSelectedService(s);
                             setDeleteModal(true);
                           }}
@@ -175,13 +197,6 @@ const BookingsPage = () => {
                         </Button>
                       </div>
                     )}
-                  </div>
-                  <Card.Text className="flex-grow-1">{s.shortDescription}</Card.Text>
-                  <div className="d-flex justify-content-between align-items-center mt-2">
-                    <strong>€ {s.price}</strong>
-                    <Link to={`/prenotazioni/${s.serviceId}`} className="btn btn-dark btn-sm rounded-pill">
-                      Dettagli
-                    </Link>
                   </div>
                 </Card.Body>
               </Card>

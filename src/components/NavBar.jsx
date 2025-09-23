@@ -4,6 +4,7 @@ import { BagHeart, PersonCircle } from "react-bootstrap-icons";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { logout } from "../redux/action/authActions";
+import CartIcon from "./CartIcon";
 
 const NavBar = () => {
   const [scrolled, setScrolled] = useState(false);
@@ -43,8 +44,8 @@ const NavBar = () => {
               </Link>
             </li>
             <li className="nav-item">
-              <Link className="nav-link text-black" to="/prenotazioni">
-                Prenotazioni
+              <Link className="nav-link text-black" to="/trattamenti">
+                Trattamenti
               </Link>
             </li>
             <li className="nav-item">
@@ -63,11 +64,14 @@ const NavBar = () => {
           {user ? (
             <>
               <NavDropdown title={<PersonCircle size={24} color="black" />} id="navbarScrollingDropdown">
-                <span>Ciao, {user.name}</span>
+                <NavDropdown.Header className="text-black" style={{ fontSize: "1.5rem" }}>
+                  Ciao, {user.name}!
+                </NavDropdown.Header>
                 <NavDropdown.Item>Le mie prenotazioni</NavDropdown.Item>
                 <NavDropdown.Item>I miei ordini</NavDropdown.Item>
                 <NavDropdown.Item onClick={() => dispatch(logout())}>Logout</NavDropdown.Item>
               </NavDropdown>
+              <CartIcon />
             </>
           ) : (
             <>
@@ -75,9 +79,7 @@ const NavBar = () => {
                 <NavDropdown.Item href="/login">Accedi</NavDropdown.Item>
                 <NavDropdown.Item href="/register">Registrati</NavDropdown.Item>
               </NavDropdown>
-              <NavDropdown title={<BagHeart size={24} color="black" />} id="navbarScrollingDropdown">
-                <NavDropdown.Item href="#">Carrello vuoto</NavDropdown.Item>
-              </NavDropdown>
+              <CartIcon />
             </>
           )}
         </div>

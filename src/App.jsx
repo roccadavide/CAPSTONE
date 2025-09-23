@@ -7,13 +7,14 @@ import HeroSection from "./components/HeroSection";
 import NavBar from "./components/NavBar";
 import ProductSection from "./components/ProductSection";
 import ProductsPage from "./components/ProductsPage";
-import ProductsHeroSection from "./components/ProductsHeroSection";
+import ProductDetails from "./components/ProductDetails";
 import AboutHeroSection from "./components/AboutHeroSection";
 import AboutDescription from "./components/AboutDescription";
-import BookingsPage from "./components/BookingsPage";
 import ServiceDetail from "./components/ServiceDetails";
+import ServicePage from "./components/ServicePage";
 import Register from "./components/Register";
 import Login from "./components/Login";
+import CartPage from "./components/CartPage";
 
 function App() {
   return (
@@ -31,14 +32,9 @@ function App() {
             </>
           }
         />
-        <Route
-          path="/prodotti"
-          element={
-            <>
-              <ProductsPage />
-            </>
-          }
-        />
+        <Route path="/prodotti" element={<ProductsPage />} />
+        <Route path="/prodotti/:productId" element={<ProductDetails />} />
+        <Route path="/carrello" element={<CartPage />} />
         <Route
           path="/chisono"
           element={
@@ -48,8 +44,8 @@ function App() {
             </>
           }
         />
-        <Route path="/prenotazioni" element={<BookingsPage />} />
-        <Route path="/prenotazioni/:serviceId" element={<ServiceDetail />} />
+        <Route path="/trattamenti" element={<ServicePage />} />
+        <Route path="/trattamenti/:serviceId" element={<ServiceDetail />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
       </Routes>

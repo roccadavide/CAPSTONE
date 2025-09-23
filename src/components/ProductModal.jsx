@@ -11,6 +11,7 @@ const ProductModal = ({ show, onHide, categories, onProductSaved, product }) => 
   const [form, setForm] = useState({
     name: "",
     price: "",
+    shortDescription: "",
     description: "",
     stock: "",
     categoryId: "",
@@ -19,24 +20,30 @@ const ProductModal = ({ show, onHide, categories, onProductSaved, product }) => 
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
 
+  const resetForm = () => {
+    setForm({
+      name: "",
+      price: "",
+      shortDescription: "",
+      description: "",
+      stock: "",
+      categoryId: "",
+    });
+    setFile(null);
+  };
+
   useEffect(() => {
     if (isEdit) {
       setForm({
         name: product.name || "",
         price: product.price || "",
+        shortDescription: product.shortDescription || "",
         description: product.description || "",
         stock: product.stock || "",
         categoryId: product.category?.categoryId || "",
       });
     } else {
-      setForm({
-        name: "",
-        price: "",
-        description: "",
-        stock: "",
-        categoryId: "",
-      });
-      setFile(null);
+      resetForm();
     }
   }, [product, isEdit]);
 
@@ -51,7 +58,7 @@ const ProductModal = ({ show, onHide, categories, onProductSaved, product }) => 
   const handleSubmit = async () => {
     setError(null);
 
-    if (!form.name || !form.price || !form.description || !form.stock || !form.categoryId) {
+    if (!form.name || !form.price || !form.description || !form.shortDescription || !form.stock || !form.categoryId) {
       setError("Compila tutti i campi obbligatori.");
       return;
     }
@@ -72,6 +79,7 @@ const ProductModal = ({ show, onHide, categories, onProductSaved, product }) => 
       const payload = {
         name: form.name,
         price: parseFloat(form.price),
+        shortDescription: form.shortDescription,
         description: form.description,
         stock: parseInt(form.stock, 10),
         categoryId: form.categoryId,
@@ -85,6 +93,7 @@ const ProductModal = ({ show, onHide, categories, onProductSaved, product }) => 
       } else {
         // POST
         savedProduct = await createProduct(payload, file, token);
+        resetForm();
       }
 
       onProductSaved(savedProduct);
@@ -113,6 +122,11 @@ const ProductModal = ({ show, onHide, categories, onProductSaved, product }) => 
           <Form.Group className="mb-3">
             <Form.Label>Prezzo (€) *</Form.Label>
             <Form.Control type="text" value={form.price} onChange={e => handleChange("price", e.target.value)} />
+          </Form.Group>
+
+          <Form.Group className="mb-3">
+            <Form.Label>Descrizione breve *</Form.Label>
+            <Form.Control as="textarea" rows={3} value={form.shortDescription} onChange={e => handleChange("shortDescription", e.target.value)} />
           </Form.Group>
 
           <Form.Group className="mb-3">
