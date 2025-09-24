@@ -12,6 +12,14 @@ h1 {
   font-style: normal;
 }
 
+.container-base {
+  margin-top: 7rem;
+  height: 70vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 /* NAVBAR */
 
 .navbar {
@@ -104,8 +112,8 @@ h1 {
 }
 
 .card {
-  max-width: 18rem;
-  border: 1px solid #745f45;
+  width: 18rem;
+  border: 2px solid #745f45;
   border-radius: 12px;
   overflow: hidden;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
@@ -588,4 +596,35 @@ h1 {
 .cart-checkout-btn:hover {
   background-color: #28a745;
   transform: scale(1.05);
+}
+
+.empty-cart {
+  margin-top: 7rem;
+  height: 60vh;
+}
+
+/* ALL ORDERS */
+
+.order-card {
+  border-radius: 12px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.order-card:hover {
+  transform: scale(1.02);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+.order-card h5 {
+  font-weight: 600;
+}
+
+.order-card .list-group-item {
+  background-color: transparent;
+  border: none;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.order-card .list-group-item:last-child {
+  border-bottom: none;
 }

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Modal, Button, Form, Alert, Spinner } from "react-bootstrap";
+import { Modal, Button, Form, Spinner } from "react-bootstrap";
 import { createService, updateService } from "../api/api";
 import { useSelector } from "react-redux";
 
@@ -17,7 +17,7 @@ const ServiceModal = ({ show, onHide, categories, onServiceSaved, service }) => 
     categoryId: "",
   });
   const [file, setFile] = useState(null);
-  const [error, setError] = useState(null);
+  const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
 
   const resetForm = () => {
@@ -30,6 +30,7 @@ const ServiceModal = ({ show, onHide, categories, onServiceSaved, service }) => 
       categoryId: "",
     });
     setFile(null);
+    setErrors({});
   };
 
   useEffect(() => {
@@ -47,31 +48,55 @@ const ServiceModal = ({ show, onHide, categories, onServiceSaved, service }) => 
     }
   }, [service, isEdit]);
 
+  const validateField = (field, value) => {
+    switch (field) {
+      case "title":
+        if (!value.trim()) return "Il titolo è obbligatorio.";
+        break;
+      case "shortDescription":
+        if (!value.trim()) return "La breve descrizione è obbligatoria.";
+        break;
+      case "description":
+        if (!value.trim()) return "La descrizione dettagliata è obbligatoria.";
+        break;
+      case "price":
+        if (!value) return "Il prezzo è obbligatorio.";
+        if (isNaN(value) || parseFloat(value) <= 0) return "Il prezzo deve essere un numero positivo.";
+        break;
+      case "durationMin":
+        if (!value) return "La durata è obbligatoria.";
+        if (isNaN(value) || parseInt(value) <= 0) return "La durata deve essere un numero positivo.";
+        break;
+      case "categoryId":
+        if (!value) return "La categoria è obbligatoria.";
+        break;
+      default:
+        return null;
+    }
+    return null;
+  };
+
   const handleChange = (field, value) => {
     setForm(prev => ({ ...prev, [field]: value }));
+    setErrors(prev => ({ ...prev, [field]: validateField(field, value) }));
   };
 
   const handleFileChange = e => {
     setFile(e.target.files[0]);
   };
 
+  const validateForm = () => {
+    const newErrors = {};
+    Object.keys(form).forEach(key => {
+      const error = validateField(key, form[key]);
+      if (error) newErrors[key] = error;
+    });
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const handleSubmit = async () => {
-    setError(null);
-
-    if (!form.title || !form.shortDescription || !form.description || !form.price || !form.durationMin || !form.categoryId) {
-      setError("Compila tutti i campi obbligatori.");
-      return;
-    }
-
-    if (isNaN(form.price) || form.price <= 0) {
-      setError("Il prezzo deve essere un numero positivo.");
-      return;
-    }
-
-    if (isNaN(form.durationMin) || form.durationMin <= 0) {
-      setError("La durata deve essere un numero positivo.");
-      return;
-    }
+    if (!validateForm()) return;
 
     try {
       setLoading(true);
@@ -81,17 +106,14 @@ const ServiceModal = ({ show, onHide, categories, onServiceSaved, service }) => 
         shortDescription: form.shortDescription,
         description: form.description,
         price: parseFloat(form.price),
-        durationMin: form.durationMin,
+        durationMin: parseInt(form.durationMin),
         categoryId: form.categoryId,
       };
 
       let savedService;
-
       if (isEdit) {
-        // PUT
         savedService = await updateService(service.serviceId, payload, file, token);
       } else {
-        // POST
         savedService = await createService(payload, file, token);
         resetForm();
       }
@@ -99,7 +121,7 @@ const ServiceModal = ({ show, onHide, categories, onServiceSaved, service }) => 
       onServiceSaved(savedService);
       onHide();
     } catch (err) {
-      setError(err.message);
+      setErrors({ general: err.message || "Errore durante il salvataggio." });
     } finally {
       setLoading(false);
     }
@@ -111,37 +133,53 @@ const ServiceModal = ({ show, onHide, categories, onServiceSaved, service }) => 
         <Modal.Title>{isEdit ? "Modifica Servizio" : "Aggiungi Servizio"}</Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        {error && <Alert variant="danger">{error}</Alert>}
+        {errors.general && <p className="text-danger">{errors.general}</p>}
 
         <Form>
           <Form.Group className="mb-3">
             <Form.Label>Titolo *</Form.Label>
-            <Form.Control type="text" value={form.title} onChange={e => handleChange("title", e.target.value)} />
+            <Form.Control type="text" value={form.title} onChange={e => handleChange("title", e.target.value)} isInvalid={!!errors.title} />
+            <Form.Control.Feedback type="invalid">{errors.title}</Form.Control.Feedback>
           </Form.Group>
 
           <Form.Group className="mb-3">
             <Form.Label>Breve descrizione *</Form.Label>
-            <Form.Control type="text" value={form.shortDescription} onChange={e => handleChange("shortDescription", e.target.value)} />
+            <Form.Control
+              type="text"
+              value={form.shortDescription}
+              onChange={e => handleChange("shortDescription", e.target.value)}
+              isInvalid={!!errors.shortDescription}
+            />
+            <Form.Control.Feedback type="invalid">{errors.shortDescription}</Form.Control.Feedback>
           </Form.Group>
 
           <Form.Group className="mb-3">
             <Form.Label>Descrizione dettagliata *</Form.Label>
-            <Form.Control as="textarea" rows={3} value={form.description} onChange={e => handleChange("description", e.target.value)} />
+            <Form.Control
+              as="textarea"
+              rows={3}
+              value={form.description}
+              onChange={e => handleChange("description", e.target.value)}
+              isInvalid={!!errors.description}
+            />
+            <Form.Control.Feedback type="invalid">{errors.description}</Form.Control.Feedback>
           </Form.Group>
 
           <Form.Group className="mb-3">
             <Form.Label>Prezzo (€) *</Form.Label>
-            <Form.Control type="number" value={form.price} onChange={e => handleChange("price", e.target.value)} />
+            <Form.Control type="number" value={form.price} onChange={e => handleChange("price", e.target.value)} isInvalid={!!errors.price} />
+            <Form.Control.Feedback type="invalid">{errors.price}</Form.Control.Feedback>
           </Form.Group>
 
           <Form.Group className="mb-3">
             <Form.Label>Durata (min) *</Form.Label>
-            <Form.Control type="number" value={form.durationMin} onChange={e => handleChange("durationMin", e.target.value)} />
+            <Form.Control type="number" value={form.durationMin} onChange={e => handleChange("durationMin", e.target.value)} isInvalid={!!errors.durationMin} />
+            <Form.Control.Feedback type="invalid">{errors.durationMin}</Form.Control.Feedback>
           </Form.Group>
 
           <Form.Group className="mb-3">
             <Form.Label>Categoria *</Form.Label>
-            <Form.Select value={form.categoryId} onChange={e => handleChange("categoryId", e.target.value)}>
+            <Form.Select value={form.categoryId} onChange={e => handleChange("categoryId", e.target.value)} isInvalid={!!errors.categoryId}>
               <option value="">-- Seleziona una categoria --</option>
               {categories.map(c => (
                 <option key={c.categoryId} value={c.categoryId}>
@@ -149,6 +187,7 @@ const ServiceModal = ({ show, onHide, categories, onServiceSaved, service }) => 
                 </option>
               ))}
             </Form.Select>
+            <Form.Control.Feedback type="invalid">{errors.categoryId}</Form.Control.Feedback>
           </Form.Group>
 
           <Form.Group className="mb-3">

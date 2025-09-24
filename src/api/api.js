@@ -283,3 +283,32 @@ export const deleteProduct = async (productId, token) => {
 
   return true;
 };
+
+// ---------------------------------- ORDERS ----------------------------------
+
+// -------------------------- GET --------------------------
+export async function fetchOrders(token) {
+  const res = await fetch(`${BASE}/orders/getAll`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  if (!res.ok) throw new Error("Impossibile recuperare l'utente");
+  return res.json();
+}
+
+// -------------------------- POST --------------------------
+export async function createOrder(payload) {
+  const res = await fetch(`${BASE}/orders`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+  const text = await res.text();
+  try {
+    return res.ok ? JSON.parse(text) : Promise.reject(JSON.parse(text));
+  } catch {
+    return res.ok ? text : Promise.reject(text);
+  }
+}

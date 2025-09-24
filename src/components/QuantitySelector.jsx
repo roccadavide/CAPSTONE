@@ -22,6 +22,7 @@ const QuantitySelector = ({ product }) => {
         quantity,
       })
     );
+    setQuantity(1);
   };
 
   return (

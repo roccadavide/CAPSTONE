@@ -1,18 +1,22 @@
 import { useDispatch, useSelector } from "react-redux";
 import { Container, Row, Col, ListGroup, Image, Button } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
-import { Dash, DashCircle, Plus, PlusCircle, Trash } from "react-bootstrap-icons";
+import { Dash, Plus, Trash } from "react-bootstrap-icons";
 import { removeFromCart, updateCartQuantity } from "../redux/action/cartActions";
+import { useState } from "react";
+import CheckoutModal from "./CheckoutModal";
 
 const CartPage = () => {
   const { items, totalPrice } = useSelector(state => state.cart);
+  const { user } = useSelector(state => state.auth);
+  const [showCheckout, setShowCheckout] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   if (items.length === 0) {
     return (
-      <Container className="py-5" style={{ marginTop: "7rem" }}>
-        <h2>Il tuo carrello è vuoto 🛒</h2>
+      <Container className="py-5 container-base flex-column">
+        <h2>🛒 Il tuo carrello è vuoto </h2>
         <Link to="/prodotti">
           <Button variant="dark" className="mt-3">
             Vai ai prodotti
@@ -83,10 +87,12 @@ const CartPage = () => {
       </div>
 
       <div className="d-flex justify-content-end mt-3">
-        <Button variant="success" size="lg" className="cart-checkout-btn">
+        <Button variant="success" size="lg" className="cart-checkout-btn" onClick={() => setShowCheckout(true)}>
           Procedi al checkout
         </Button>
       </div>
+
+      <CheckoutModal show={showCheckout} onHide={() => setShowCheckout(false)} user={user} />
     </Container>
   );
 };

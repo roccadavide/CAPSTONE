@@ -15,6 +15,8 @@ import ServicePage from "./components/ServicePage";
 import Register from "./components/Register";
 import Login from "./components/Login";
 import CartPage from "./components/CartPage";
+import OrderSuccessPage from "./components/OrderSuccessPage";
+import AllOrders from "./components/AllOrders";
 
 function App() {
   return (
@@ -35,6 +37,8 @@ function App() {
         <Route path="/prodotti" element={<ProductsPage />} />
         <Route path="/prodotti/:productId" element={<ProductDetails />} />
         <Route path="/carrello" element={<CartPage />} />
+        <Route path="/ordine-confermato" element={<OrderSuccessPage />} />
+        <Route path="/ordini/tutti" element={<AllOrders />} />
         <Route
           path="/chisono"
           element={

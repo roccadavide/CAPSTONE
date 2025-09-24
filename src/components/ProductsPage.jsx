@@ -103,7 +103,7 @@ function ProductsPage() {
   // ---------- UI ----------
   if (loading) {
     return (
-      <Container style={{ marginTop: "7rem" }}>
+      <Container className="container-base">
         <Spinner animation="border" role="status" />
       </Container>
     );
@@ -111,14 +111,14 @@ function ProductsPage() {
 
   if (error) {
     return (
-      <Container style={{ marginTop: "7rem" }}>
+      <Container className="container-base">
         <p>{error}</p>
       </Container>
     );
   }
 
   return (
-    <Container fluid className="py-5" style={{ marginTop: "7rem" }}>
+    <Container fluid className="py-5 d-flex flex-column align-items-center" style={{ marginTop: "7rem" }}>
       <h1 className="text-center mb-3">La mia selezione di prodotti</h1>
 
       <div className="d-flex flex-wrap justify-content-center gap-2 mb-4">
@@ -160,7 +160,7 @@ function ProductsPage() {
       <Container>
         <Row className="g-4 justify-content-center">
           {filtered.map(p => (
-            <Col key={p.productId} xs={12} sm={6} md={4} lg={3}>
+            <Col key={p.productId} xs={12} sm={6} md={4} lg={3} className="d-flex justify-content-center">
               <Card className="h-100 shadow-sm" onClick={() => navigate(`/prodotti/${p.productId}`)}>
                 <Card.Img src={p.images?.[0]} alt={p.name} />
                 <Card.Body className="d-flex flex-column">

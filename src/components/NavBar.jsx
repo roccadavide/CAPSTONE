@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Container, NavDropdown } from "react-bootstrap";
 import { BagHeart, PersonCircle } from "react-bootstrap-icons";
 import { useDispatch, useSelector } from "react-redux";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { logout } from "../redux/action/authActions";
 import CartIcon from "./CartIcon";
 
@@ -10,6 +10,7 @@ const NavBar = () => {
   const [scrolled, setScrolled] = useState(false);
   const { user } = useSelector(state => state.auth);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 50);
@@ -62,17 +63,33 @@ const NavBar = () => {
         </div>
         <div className="d-flex align-items-center gap-5 me-5">
           {user ? (
-            <>
-              <NavDropdown title={<PersonCircle size={24} color="black" />} id="navbarScrollingDropdown">
-                <NavDropdown.Header className="text-black" style={{ fontSize: "1.5rem" }}>
-                  Ciao, {user.name}!
-                </NavDropdown.Header>
-                <NavDropdown.Item>Le mie prenotazioni</NavDropdown.Item>
-                <NavDropdown.Item>I miei ordini</NavDropdown.Item>
-                <NavDropdown.Item onClick={() => dispatch(logout())}>Logout</NavDropdown.Item>
-              </NavDropdown>
-              <CartIcon />
-            </>
+            user.role === "ADMIN" ? (
+              <>
+                <NavDropdown title={<PersonCircle size={24} color="black" />} id="navbarScrollingDropdown">
+                  <NavDropdown.Header className="text-black" style={{ fontSize: "1.5rem" }}>
+                    Ciao, {user.name}!
+                  </NavDropdown.Header>
+                  <NavDropdown.Item onClick={() => navigate("/mioprofilo")}>Il mio profilo</NavDropdown.Item>
+                  <NavDropdown.Item onClick={() => navigate("/prenotazioni/tutte")}>Visualizza prenotazioni</NavDropdown.Item>
+                  <NavDropdown.Item onClick={() => navigate("/ordini/tutti")}>Visualizza ordini</NavDropdown.Item>
+                  <NavDropdown.Item onClick={() => dispatch(logout())}>Logout</NavDropdown.Item>
+                </NavDropdown>
+                <CartIcon />
+              </>
+            ) : (
+              <>
+                <NavDropdown title={<PersonCircle size={24} color="black" />} id="navbarScrollingDropdown">
+                  <NavDropdown.Header className="text-black" style={{ fontSize: "1.5rem" }}>
+                    Ciao, {user.name}!
+                  </NavDropdown.Header>
+                  <NavDropdown.Item onClick={() => navigate("/mioprofilo")}>Il mio profilo</NavDropdown.Item>
+                  <NavDropdown.Item onClick={() => navigate("/prenotazioni")}>Le mie prenotazioni</NavDropdown.Item>
+                  <NavDropdown.Item onClick={() => navigate("/ordini")}>I miei ordini</NavDropdown.Item>
+                  <NavDropdown.Item onClick={() => dispatch(logout())}>Logout</NavDropdown.Item>
+                </NavDropdown>
+                <CartIcon />
+              </>
+            )
           ) : (
             <>
               <NavDropdown title={<PersonCircle size={24} color="black" />} id="navbarScrollingDropdown">

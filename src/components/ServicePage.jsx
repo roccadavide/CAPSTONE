@@ -103,7 +103,7 @@ const BookingsPage = () => {
   // ---------- UI ----------
   if (loading) {
     return (
-      <Container style={{ marginTop: "7rem" }}>
+      <Container className="container-base">
         <Spinner animation="border" role="status" />
       </Container>
     );
@@ -111,7 +111,7 @@ const BookingsPage = () => {
 
   if (error) {
     return (
-      <Container style={{ marginTop: "7rem" }}>
+      <Container className="container-base">
         <p>{error}</p>
       </Container>
     );
@@ -158,7 +158,7 @@ const BookingsPage = () => {
       <Container>
         <Row className="g-4 justify-content-center">
           {filtered.map(s => (
-            <Col key={s.serviceId} xs={12} sm={6} md={4} lg={3}>
+            <Col key={s.serviceId} xs={12} sm={6} md={4} lg={3} className="d-flex justify-content-center">
               <Card className="h-100 shadow-sm" onClick={() => navigate(`/trattamenti/${s.serviceId}`)}>
                 <Card.Img src={s.images?.[0]} alt={s.title} />
                 <Card.Body className="d-flex flex-column">
