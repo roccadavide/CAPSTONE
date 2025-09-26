@@ -41,7 +41,7 @@ const ProductModal = ({ show, onHide, categories, onProductSaved, product }) => 
         shortDescription: product.shortDescription || "",
         description: product.description || "",
         stock: product.stock || "",
-        categoryId: product.category?.categoryId || "",
+        categoryId: product.categoryId || "",
       });
     } else {
       resetForm();
@@ -193,6 +193,11 @@ const ProductModal = ({ show, onHide, categories, onProductSaved, product }) => 
 
           <Form.Group className="mb-3">
             <Form.Label>Immagine</Form.Label>
+
+            {isEdit && product.images?.length > 0 && !file && (
+              <small className="d-block text-muted mb-2">L'immagine attuale rimarrà se non ne carichi una nuova</small>
+            )}
+
             <Form.Control type="file" accept="image/*" onChange={handleFileChange} />
           </Form.Group>
         </Form>

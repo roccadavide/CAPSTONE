@@ -173,7 +173,7 @@ function ProductsPage() {
                   </div>
                   <Card.Text className="flex-grow-1">{p.shortDescription}</Card.Text>
                   <div className="d-flex justify-content-between align-items-center mt-2">
-                    <strong>€ {p.price}</strong>
+                    <strong>{p.price.toLocaleString("it-IT", { style: "currency", currency: "EUR" })}</strong>
                     {user?.role === "ADMIN" && (
                       <div className="d-flex gap-2 ms-auto">
                         <Button

@@ -1,4 +1,4 @@
-import { LOGIN_SUCCESS, LOGOUT } from "../action/authActions";
+import { LOGIN_SUCCESS, LOGOUT, UPDATE_USER } from "../action/authActions";
 
 let userFromStorage = null;
 const userStr = localStorage.getItem("user");
@@ -28,6 +28,13 @@ export default function authReducer(state = initialState, action) {
         ...state,
         user: action.payload.user,
         token: action.payload.token,
+      };
+
+    case UPDATE_USER:
+      localStorage.setItem("user", JSON.stringify(action.payload));
+      return {
+        ...state,
+        user: action.payload,
       };
 
     case LOGOUT:

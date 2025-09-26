@@ -41,7 +41,7 @@ const ServiceModal = ({ show, onHide, categories, onServiceSaved, service }) => 
         description: service.description || "",
         price: service.price || "",
         durationMin: service.durationMin || "",
-        categoryId: service.category?.categoryId || "",
+        categoryId: service.categoryName || "",
       });
     } else {
       resetForm();
@@ -192,6 +192,11 @@ const ServiceModal = ({ show, onHide, categories, onServiceSaved, service }) => 
 
           <Form.Group className="mb-3">
             <Form.Label>Immagine</Form.Label>
+
+            {isEdit && service.images?.length > 0 && !file && (
+              <small className="d-block text-muted mb-2">L'immagine attuale rimarrà se non ne carichi una nuova</small>
+            )}
+
             <Form.Control type="file" accept="image/*" onChange={handleFileChange} />
           </Form.Group>
         </Form>

@@ -63,7 +63,6 @@ const CheckoutModal = ({ show, onHide, user }) => {
     const { name, value } = e.target;
     setForm({ ...form, [name]: value });
 
-    // validazione live
     setErrors(prev => ({ ...prev, [name]: validateField(name, value) }));
   };
 

@@ -85,7 +85,7 @@ const ProductDetail = () => {
             <small className="text-muted">{product.stock} rimanenti</small>
           </div>
           <p className="mb-3">{product.description}</p>
-          <h4 className="mb-4">€ {product.price}</h4>
+          <h4 className="mb-4">{product.price.toLocaleString("it-IT", { style: "currency", currency: "EUR" })}</h4>
           <QuantitySelector product={product} />
         </Col>
       </Row>

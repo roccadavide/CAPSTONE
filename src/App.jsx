@@ -17,6 +17,7 @@ import Login from "./components/Login";
 import CartPage from "./components/CartPage";
 import OrderSuccessPage from "./components/OrderSuccessPage";
 import AllOrders from "./components/AllOrders";
+import MyProfile from "./components/MyProfile";
 
 function App() {
   return (
@@ -39,6 +40,7 @@ function App() {
         <Route path="/carrello" element={<CartPage />} />
         <Route path="/ordine-confermato" element={<OrderSuccessPage />} />
         <Route path="/ordini/tutti" element={<AllOrders />} />
+        <Route path="/mioprofilo" element={<MyProfile />} />
         <Route
           path="/chisono"
           element={

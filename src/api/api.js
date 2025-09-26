@@ -50,6 +50,36 @@ export async function registerUser(payload) {
   }
 }
 
+// -------------------------- PUT --------------------------
+export async function updateUser(payload, userId, token) {
+  const res = await fetch(`${BASE}/users/${userId}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+    body: JSON.stringify(payload),
+  });
+  if (!res.ok) {
+    const errText = await res.text();
+    throw new Error(errText || "Errore aggiornamento utente");
+  }
+
+  return res.json();
+}
+
+// -------------------------- PATCH --------------------------
+export async function patchPassword(payload, userId, token) {
+  const res = await fetch(`${BASE}/users/${userId}/password`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+    body: JSON.stringify(payload),
+  });
+  if (!res.ok) {
+    const errText = await res.text();
+    throw new Error(errText || "Errore aggiornamento utente");
+  }
+
+  return res.json();
+}
+
 // ---------------------------------- CATEGORIES ----------------------------------
 
 export async function fetchCategories() {
@@ -183,6 +213,14 @@ export async function fetchProducts() {
   return data.content || [];
 }
 
+// -------------------------- GET BY ID --------------------------
+export async function fetchProductById(productId) {
+  const res = await fetch(`${BASE}/products/${productId}`);
+  if (!res.ok) throw new Error("Impossibile recuperare il prodotto!");
+
+  return await res.json();
+}
+
 // -------------------------- POST --------------------------
 export const createProduct = async (productData, file, token) => {
   if (!token) throw new Error("Token mancante");
@@ -312,3 +350,22 @@ export async function createOrder(payload) {
     return res.ok ? text : Promise.reject(text);
   }
 }
+
+// -------------------------- DELETE --------------------------
+export const deleteOrder = async (orderId, token) => {
+  if (!token) throw new Error("Token mancante");
+
+  const res = await fetch(`${BASE}/orders/${orderId}`, {
+    method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  if (!res.ok) {
+    const errorText = await res.text();
+    throw new Error(`Errore eliminazione servizio: ${errorText}`);
+  }
+
+  return true;
+};

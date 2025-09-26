@@ -85,7 +85,7 @@ const ServiceDetail = () => {
             <small className="text-muted">{service.durationMin} min</small>
           </div>
           <p className="mb-3">{service.description}</p>
-          <h4 className="mb-4">€ {service.price}</h4>
+          <h4 className="mb-4">€ {service.price.toLocaleString("it-IT", { style: "currency", currency: "EUR" })}</h4>
           <Button variant="dark" className="rounded-pill px-4" onClick={() => setOpen(true)}>
             Prenota ora
           </Button>

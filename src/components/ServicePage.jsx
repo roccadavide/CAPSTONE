@@ -171,7 +171,7 @@ const BookingsPage = () => {
                   </div>
                   <Card.Text className="flex-grow-1">{s.shortDescription}</Card.Text>
                   <div className="d-flex justify-content-between align-items-center mt-2">
-                    <strong>€ {s.price}</strong>
+                    <strong>{s.price.toLocaleString("it-IT", { style: "currency", currency: "EUR" })}</strong>
                     {user?.role === "ADMIN" && (
                       <div className="d-flex gap-2 ms-auto">
                         <Button
