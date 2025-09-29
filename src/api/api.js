@@ -101,6 +101,14 @@ export async function fetchServices() {
   return data.content || [];
 }
 
+// -------------------------- GET BY ID --------------------------
+export async function fetchServiceById(serviceId) {
+  const res = await fetch(`${BASE}/serviceItems/${serviceId}`);
+  if (!res.ok) throw new Error("Impossibile recuperare il servizio!");
+
+  return await res.json();
+}
+
 // -------------------------- POST --------------------------
 export const createService = async (serviceData, file, token) => {
   if (!token) throw new Error("Token mancante");
@@ -332,17 +340,33 @@ export async function fetchOrders(token) {
     },
   });
 
-  if (!res.ok) throw new Error("Impossibile recuperare l'utente");
+  if (!res.ok) throw new Error("Impossibile recuperare l'ordine");
+  return res.json();
+}
+
+// -------------------------- GET --------------------------
+export async function fetchMyOrders(token, email) {
+  const res = await fetch(`${BASE}/orders/email/${email}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  if (!res.ok) throw new Error("Impossibile recuperare l'ordine");
   return res.json();
 }
 
 // -------------------------- POST --------------------------
-export async function createOrder(payload) {
+export async function createOrder(payload, token) {
   const res = await fetch(`${BASE}/orders`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+      ...(token && { Authorization: `Bearer ${token}` }),
+    },
     body: JSON.stringify(payload),
   });
+
   const text = await res.text();
   try {
     return res.ok ? JSON.parse(text) : Promise.reject(JSON.parse(text));
@@ -365,6 +389,88 @@ export const deleteOrder = async (orderId, token) => {
   if (!res.ok) {
     const errorText = await res.text();
     throw new Error(`Errore eliminazione servizio: ${errorText}`);
+  }
+
+  return true;
+};
+
+// ---------------------------------- AVAILABILITIES ----------------------------------
+
+// -------------------------- GET --------------------------
+export async function fetchAvailabilities(serviceId, date) {
+  const res = await fetch(`${BASE}/availabilities/services/${serviceId}?date=${date}`);
+
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.message || "Impossibile recuperare le disponibilità");
+  }
+
+  return res.json();
+}
+
+// ---------------------------------- BOOKINGS ----------------------------------
+// -------------------------- GET --------------------------
+export async function fetchBookings(token) {
+  if (!token) throw new Error("Token mancante");
+
+  const res = await fetch(`${BASE}/bookings/getAll`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  if (!res.ok) throw new Error("Impossibile recuperare la prenotazione");
+  return res.json();
+}
+
+// -------------------------- GET BY ID --------------------------
+export async function fetchMyBookings(token, email) {
+  if (!token) throw new Error("Token mancante");
+
+  const res = await fetch(`${BASE}/bookings/email/${email}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  if (!res.ok) throw new Error("Impossibile recuperare il servizio!");
+
+  return await res.json();
+}
+
+// -------------------------- POST --------------------------
+export async function createBooking(payload, token) {
+  const res = await fetch(`${BASE}/bookings`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      ...(token && { Authorization: `Bearer ${token}` }),
+    },
+    body: JSON.stringify(payload),
+  });
+
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.message || "Errore nella creazione della prenotazione");
+  }
+
+  return res.json();
+}
+
+// -------------------------- DELETE --------------------------
+export const deleteBooking = async (bookingId, token) => {
+  if (!token) throw new Error("Token mancante");
+
+  const res = await fetch(`${BASE}/bookings/${bookingId}`, {
+    method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  if (!res.ok) {
+    const errorText = await res.text();
+    throw new Error(`Errore eliminazione prenotaziobe: ${errorText}`);
   }
 
   return true;

@@ -1,43 +1,72 @@
-import { useMemo, useState } from "react";
-import { Modal, Button, Form, Badge } from "react-bootstrap";
+import { useEffect, useState } from "react";
+import { Modal, Button, Form, Badge, Spinner, Alert } from "react-bootstrap";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { generateTimeSlots } from "../utils/schedules";
+import { useSelector } from "react-redux";
+import { createBooking, fetchAvailabilities } from "../api/api";
+import { useNavigate } from "react-router-dom";
 
 const BookingModal = ({ show, onHide, service }) => {
+  const { token } = useSelector(state => state.auth);
+  const navigate = useNavigate();
+
   const [step, setStep] = useState(1);
   const [date, setDate] = useState(new Date());
+  const [slots, setSlots] = useState([]);
+  const [loadingSlots, setLoadingSlots] = useState(false);
+  const [error, setError] = useState(null);
+
   const [slot, setSlot] = useState(null);
   const [customer, setCustomer] = useState({ name: "", email: "", phone: "", notes: "" });
-
-  const slots = useMemo(() => {
-    return generateTimeSlots(date, {
-      open: "09:00",
-      close: "19:00",
-      durationMin: service?.durationMin || 30,
-      breaks: [["13:00", "14:00"]],
-    });
-  }, [date, service]);
 
   const reset = () => {
     setStep(1);
     setSlot(null);
+    setSlots([]);
     setCustomer({ name: "", email: "", phone: "", notes: "" });
   };
 
-  const confirm = () => {
-    const booking = {
-      serviceId: service.id,
-      title: service.title,
-      date: date.toDateString(),
-      slot,
-      customer,
-      price: service.price,
-    };
-    console.log("PRENOTAZIONE:", booking);
-    // TODO: POST al backend /bookings
-    onHide();
-    reset();
+  useEffect(() => {
+    if (step === 2 && service) {
+      const loadSlots = async () => {
+        try {
+          setLoadingSlots(true);
+          setError(null);
+
+          const data = await fetchAvailabilities(service.serviceId, date.toISOString().split("T")[0]);
+
+          setSlots(data.slots || []);
+        } catch (err) {
+          setError(err.message);
+        } finally {
+          setLoadingSlots(false);
+        }
+      };
+
+      loadSlots();
+    }
+  }, [step, service, date, token]);
+
+  const confirm = async () => {
+    try {
+      const payload = {
+        customerName: customer.name,
+        customerEmail: customer.email,
+        customerPhone: customer.phone,
+        notes: customer.notes,
+        startTime: `${date.toISOString().split("T")[0]}T${slot.start}:00`,
+        endTime: `${date.toISOString().split("T")[0]}T${slot.end}:00`,
+        serviceId: service.serviceId,
+      };
+
+      token ? await createBooking(payload, token) : await createBooking(payload);
+
+      onHide();
+      reset();
+      navigate("/prenotazione-confermata");
+    } catch (err) {
+      alert(err.message);
+    }
   };
 
   return (
@@ -75,12 +104,15 @@ const BookingModal = ({ show, onHide, service }) => {
         {step === 2 && (
           <>
             <h5 className="mb-3">2/4 — Seleziona l’orario</h5>
+            {loadingSlots && <Spinner animation="border" />}
+            {error && <Alert variant="danger">{error}</Alert>}
             <div className="d-flex flex-wrap gap-2">
               {slots.map(s => (
                 <Button key={s.start} variant={slot?.start === s.start ? "dark" : "outline-dark"} className="rounded-pill" onClick={() => setSlot(s)}>
-                  {s.start}
+                  {s.start} - {s.end}
                 </Button>
               ))}
+              {slots.length === 0 && !loadingSlots && <p>Nessuno slot disponibile per questa data.</p>}
             </div>
             <div className="d-flex justify-content-between mt-3">
               <Button variant="outline-dark" onClick={() => setStep(1)}>
@@ -142,7 +174,7 @@ const BookingModal = ({ show, onHide, service }) => {
                 <strong>Data:</strong> {date.toLocaleDateString()}
               </li>
               <li>
-                <strong>Orario:</strong> {slot?.start}
+                <strong>Orario:</strong> {slot?.start} - {slot?.end}
               </li>
               <li>
                 <strong>Cliente:</strong> {customer.name} — {customer.phone}

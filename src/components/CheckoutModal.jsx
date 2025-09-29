@@ -9,6 +9,7 @@ const CheckoutModal = ({ show, onHide, user }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { items } = useSelector(state => state.cart);
+  const { token } = useSelector(state => state.auth);
 
   const [form, setForm] = useState({
     customerName: "",
@@ -95,7 +96,7 @@ const CheckoutModal = ({ show, onHide, user }) => {
 
     try {
       setLoading(true);
-      await createOrder(payload);
+      token ? await createOrder(payload, token) : await createOrder(payload);
       dispatch(clearCart());
       navigate("/ordine-confermato");
     } catch (err) {

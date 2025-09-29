@@ -1,37 +1,39 @@
 import { useEffect, useState } from "react";
-import { deleteOrder, fetchOrders, fetchProductById } from "../api/api";
 import { Container, Spinner, Card, Badge, ListGroup, Row, Col, Image, Button } from "react-bootstrap";
 import { useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
 import { Trash2Fill } from "react-bootstrap-icons";
 import DeleteOrderModal from "./DeleteOrderModal";
+import { fetchMyOrders, fetchProductById, deleteOrder } from "../api/api";
+import { useNavigate } from "react-router-dom";
 
-const AllOrders = () => {
-  const [allOrders, setAllOrders] = useState([]);
+const MyOrders = () => {
+  const [myOrders, setMyOrders] = useState([]);
   const [products, setProducts] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedOrder, setSelectedOrder] = useState(null);
-  const [deleteModal, setDeleteModal] = useState(null);
+  const [deleteModal, setDeleteModal] = useState(false);
+
   const navigate = useNavigate();
+  const { token, user } = useSelector(state => state.auth);
 
-  const { token } = useSelector(state => state.auth);
-
-  // ---------- FETCH ORDINI ----------
+  // ---------- FETCH ORDINI UTENTE ----------
   useEffect(() => {
+    console.log("Token:", token);
     const loadData = async () => {
       try {
-        const orders = await fetchOrders(token);
-        setAllOrders(orders.content);
+        const res = await fetchMyOrders(token, user.email);
+        setMyOrders(res || []);
       } catch (err) {
         setError(err.message);
       } finally {
         setLoading(false);
       }
     };
-    loadData();
-  }, [token]);
+    if (user?.email) loadData();
+  }, [token, user]);
 
+  // ---------- FETCH PRODOTTI LEGATI ----------
   const getProduct = async id => {
     if (products[id]) return products[id];
     try {
@@ -45,8 +47,9 @@ const AllOrders = () => {
   };
 
   useEffect(() => {
-    if (allOrders.length > 0) {
-      allOrders.forEach(order => {
+    console.log(myOrders);
+    if (myOrders.length > 0) {
+      myOrders.forEach(order => {
         order.orderItems.forEach(item => {
           getProduct(item.productId);
         });
@@ -58,7 +61,7 @@ const AllOrders = () => {
   const handleDeleteConfirm = async id => {
     try {
       await deleteOrder(id, token);
-      setAllOrders(prev => prev.filter(o => o.orderId !== id));
+      setMyOrders(prev => prev.filter(o => o.orderId !== id));
       setDeleteModal(false);
       setSelectedOrder(null);
     } catch (err) {
@@ -85,9 +88,11 @@ const AllOrders = () => {
 
   return (
     <Container className="py-5 container-base flex-column">
-      <h2 className="mb-4">📦 Tutti gli ordini</h2>
+      <h2 className="mb-4">📦 I miei ordini</h2>
 
-      {allOrders.map(order => (
+      {myOrders.length === 0 && <p>Non hai ancora effettuato ordini.</p>}
+
+      {myOrders.map(order => (
         <Card key={order.orderId} className="mb-4 shadow-sm order-card w-100">
           <Card.Body>
             <Row>
@@ -126,7 +131,6 @@ const AllOrders = () => {
                 <ListGroup variant="flush">
                   {order.orderItems.map(item => {
                     const product = products[item.productId];
-
                     return (
                       <ListGroup.Item key={item.orderItemId} className="d-flex justify-content-between align-items-center">
                         <span style={{ width: "100%" }}>
@@ -139,7 +143,7 @@ const AllOrders = () => {
                               )}
                             </Col>
                             <Col xs={9} md={6}>
-                              <h6 onClick={() => navigate(`/prodotti/${product.productId}`)} className="cart-product-name">
+                              <h6 onClick={() => navigate(`/prodotti/${product?.productId}`)} className="cart-product-name">
                                 {product ? product.name : "Caricamento..."}
                               </h6>
                               <p className="text-muted mb-1">€ {item.price.toFixed(2)} cad.</p>
@@ -159,9 +163,10 @@ const AllOrders = () => {
           </Card.Body>
         </Card>
       ))}
+
       <DeleteOrderModal show={deleteModal} onHide={() => setDeleteModal(false)} order={selectedOrder} onConfirm={handleDeleteConfirm} />
     </Container>
   );
 };
 
-export default AllOrders;
+export default MyOrders;
