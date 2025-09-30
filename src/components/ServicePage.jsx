@@ -7,7 +7,7 @@ import ServiceModal from "./ServiceModal";
 import DeleteServiceModal from "./DeleteServiceModal";
 import { PencilFill, Trash2Fill, Plus } from "react-bootstrap-icons";
 
-const BookingsPage = () => {
+const ServicePage = () => {
   const [cat, setCat] = useState("all");
   const [q, setQ] = useState("");
   const [allServices, setAllServices] = useState([]);
@@ -119,7 +119,7 @@ const BookingsPage = () => {
 
   return (
     <Container fluid className="py-5" style={{ marginTop: "7rem" }}>
-      <h1 className="text-center mb-3">Prenota un servizio</h1>
+      <h1 className="text-center mb-3">Prenota un trattamento</h1>
 
       <div className="d-flex flex-wrap justify-content-center gap-2 mb-4">
         <Button key="all" variant={cat === "all" ? "dark" : "outline-dark"} onClick={() => setCat("all")} className="rounded-pill px-3">
@@ -160,7 +160,9 @@ const BookingsPage = () => {
           {filtered.map(s => (
             <Col key={s.serviceId} xs={12} sm={6} md={4} lg={3} className="d-flex justify-content-center">
               <Card className="h-100 shadow-sm" onClick={() => navigate(`/trattamenti/${s.serviceId}`)}>
-                <Card.Img src={s.images?.[0]} alt={s.title} />
+                <div className="card-img-container">
+                  <Card.Img src={s.images?.[0]} alt={s.title} />
+                </div>
                 <Card.Body className="d-flex flex-column">
                   <Card.Title className="mb-1">{s.title}</Card.Title>
                   <div className="mb-2 d-flex align-items-center gap-2">
@@ -225,4 +227,4 @@ const BookingsPage = () => {
   );
 };
 
-export default BookingsPage;
+export default ServicePage;
