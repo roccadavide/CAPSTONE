@@ -47,12 +47,11 @@ const AboutDescription = () => {
         </Col>
         <Col md={6} className="text-center">
           <div className="about-image-wrap fade-section visible">
-            <img src="/chisono-michela.jpeg" alt="Michela" className="about-image" />
+            <img src="/michela.JPEG" alt="Michela" className="about-image" />
           </div>
         </Col>
       </Row>
 
-      {/* COMPETENZE */}
       <Row className="mb-5">
         <Col>
           <div data-id="skills" ref={el => (sectionsRef.current[1] = el)} className={`fade-section text-center ${visibleSections["skills"] ? "visible" : ""}`}>
@@ -68,7 +67,6 @@ const AboutDescription = () => {
         </Col>
       </Row>
 
-      {/* VALORI */}
       <Row className="g-4 mb-5">
         {[
           { icon: "💆‍♀️", title: "Cura", text: "Trattamenti su misura e attenzione autentica alla persona." },
@@ -91,7 +89,6 @@ const AboutDescription = () => {
         ))}
       </Row>
 
-      {/* FILOSOFIA */}
       <Row className="justify-content-center">
         <Col md={9}>
           <div data-id="mission" ref={el => (sectionsRef.current[5] = el)} className={`fade-section ${visibleSections["mission"] ? "visible" : ""}`}>

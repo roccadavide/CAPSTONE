@@ -22,7 +22,7 @@ const ResultsPreview = () => {
   const { user, token } = useSelector(state => state.auth);
   const navigate = useNavigate();
 
-  const FEATURED_RESULTS = ["b01da695-f333-49dd-a337-907ccd2f01c9", "result-id-2", "result-id-3"];
+  const FEATURED_RESULTS = ["b01da695-f333-49dd-a337-907ccd2f01c9", "9e8ed86d-b4be-42e1-a1bb-58e8987365a9", "f1d9bc9f-1be2-4897-b6a0-cfabf09b1e71"];
 
   // ---------- FETCH ----------
   useEffect(() => {
